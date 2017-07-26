@@ -1,19 +1,26 @@
-# Foo
+# Compile and run
 
-**TODO: Add description**
+Compile the code:
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `foo` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [{:foo, "~> 0.1.0"}]
-end
+```
+mix deps.get
+mix compile
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/foo](https://hexdocs.pm/foo).
+Then, run iex:
 
+```
+iex -S mix
+```
+
+To start the service, run the following command from the commandline:
+
+```
+APNS_Listener.start_link
+```
+
+# CouchDB
+
+The file `foo.ex` contains some test code to talk to CouchDB. The
+CouchDB library returns the raw JSON strings. The example uses Poison
+to encode and decode the JSON structures.
