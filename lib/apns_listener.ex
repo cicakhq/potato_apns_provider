@@ -16,8 +16,8 @@ defmodule APNS_Listener do
     case AMQP.Connection.open do
       {:ok, conn} ->
         {:ok, channel} = AMQP.Channel.open(conn)
-        {:ok, _} = AMQP.Queue.declare channel, @queue
-        :ok = AMQP.Queue.bind channel, @queue, @exchange, [routing_key: "#"]
+        {:ok, _} = AMQP.Queue.declare(channel, @queue, arguments: [{"x-message-ttl", :long, 5 * 60 * 1000}])
+        :ok = AMQP.Queue.bind(channel, @queue, @exchange, [routing_key: "#"])
         {:ok, _ctag} = AMQP.Basic.consume(channel, @queue)
         {:ok, channel}
       {:error, _} ->
