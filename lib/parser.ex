@@ -96,4 +96,18 @@ defmodule Parser do
     {result, _} = parse_expr(String.codepoints(s))
     result
   end
+
+  defp plist_to_map_private(l, prefix) do
+    if length(l) == 0 do
+      prefix
+    else
+      [key | value_and_rest] = l
+      [value | rest] = value_and_rest
+      plist_to_map_private(rest, prefix ++ [{key, value}])
+    end      
+  end
+
+  def ex_plist_to_map(l) do
+    plist_to_map_private(l, [])
+  end
 end

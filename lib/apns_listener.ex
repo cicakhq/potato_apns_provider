@@ -5,8 +5,7 @@ defmodule APNS_Listener do
     GenServer.start_link(__MODULE__, [], [])
   end
 
-  @exchange "user-notifications-ex"
-  @queue "foo"
+  @exchange "apns-sender-ex"
 
   def init(_opts) do
     rabbitmq_connect()
@@ -16,9 +15,13 @@ defmodule APNS_Listener do
     case AMQP.Connection.open do
       {:ok, conn} ->
         {:ok, channel} = AMQP.Channel.open(conn)
-        {:ok, _} = AMQP.Queue.declare(channel, @queue, arguments: [{"x-message-ttl", :long, 5 * 60 * 1000}])
-        :ok = AMQP.Queue.bind(channel, @queue, @exchange, [routing_key: "#"])
-        {:ok, _ctag} = AMQP.Basic.consume(channel, @queue)
+        {:ok, queue} = AMQP.Queue.declare(channel)
+
+        queue_name = queue.queue
+        IO.puts "Queue name: #{queue_name}"
+
+        :ok = AMQP.Queue.bind(channel, queue_name, @exchange, [routing_key: "#"])
+        {:ok, _ctag} = AMQP.Basic.consume(channel, queue_name)
         {:ok, channel}
       {:error, _} ->
         :timer.sleep(10000)
@@ -53,7 +56,7 @@ defmodule APNS_Listener do
 
   defp consume(channel, tag, _redelivered, payload) do
     AMQP.Basic.ack(channel, tag)
-    parsed = LispUtil.lisp_plist_to_map(Parser.parse_from_string(payload))
+    parsed = Poison.decode!(payload)
     IO.puts "Got message: #{inspect(parsed)}"
   end
 end

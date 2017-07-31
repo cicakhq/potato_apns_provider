@@ -30,6 +30,7 @@ defmodule Foo.Mixfile do
   defp deps do
     [{:amqp, "~> 1.0.0-pre.1"},
      {:couchdb_connector, "~> 0.5.0"},
-     {:poison, "~> 3.1"}]
+     {:poison, "~> 3.1.0"},
+     {:apns, git: "https://github.com/chvanikoff/apns4ex"}]
   end
 end
