@@ -58,5 +58,18 @@ defmodule APNS_Listener do
     AMQP.Basic.ack(channel, tag)
     parsed = Poison.decode!(payload)
     IO.puts "Got message: #{inspect(parsed)}"
+
+    sender_name = parsed["sender_name"]
+
+    message = APNS.Message.new
+    |> Map.put(:token, parsed["token"])
+    |> Map.put(:alert, "Potato message from #{sender_name}")
+    |> Map.put(:extra, %{"channel" => parsed["channel"],
+                         "message_id" => parsed["message_id"],
+                         "notification_type" => parsed["notification_type"],
+                         "sender_id" => parsed["sender_id"],
+                         "sender_name" => sender_name,
+                         "text" => parsed["text"]})
+    APNS.push(:dev_pool, message)
   end
 end

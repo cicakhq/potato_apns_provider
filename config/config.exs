@@ -28,3 +28,19 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+
+config :apns,
+  callback_module:    APNS.Callback,
+  timeout:            30,
+  feedback_interval:  1200,
+  support_old_ios:    true,
+  expiry:    60,
+  pools: [
+    dev_pool: [
+      env: :dev,
+      pool_size: 10,
+      pool_max_overflow: 0,
+      certfile: "foo.pem",
+      keyfile: "key.pem"
+    ]
+  ]
