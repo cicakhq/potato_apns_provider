@@ -13,7 +13,7 @@ defmodule APNS_Listener do
   end
 
   defp rabbitmq_connect do
-    case AMQP.Connection.open(host: "10.137.2.26") do
+    case AMQP.Connection.open do
       {:ok, conn} ->
         {:ok, channel} = AMQP.Channel.open(conn)
         {:ok, queue} = AMQP.Queue.declare(channel, @queue, [arguments: [{"x-message-ttl", :long, 60 * 60 * 1000}]])
