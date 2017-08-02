@@ -6,6 +6,7 @@ defmodule APNS_Listener do
   end
 
   @exchange "apns-sender-ex"
+  @queue "apns-sender"
 
   def init(_opts) do
     rabbitmq_connect()
@@ -15,7 +16,7 @@ defmodule APNS_Listener do
     case AMQP.Connection.open do
       {:ok, conn} ->
         {:ok, channel} = AMQP.Channel.open(conn)
-        {:ok, queue} = AMQP.Queue.declare(channel)
+        {:ok, queue} = AMQP.Queue.declare(channel, @queue)
 
         queue_name = queue.queue
         IO.puts "Queue name: #{queue_name}"
