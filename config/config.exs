@@ -30,17 +30,17 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 
 config :apns,
-  callback_module:    APNS.Callback,
+  callback_module:    APNS_Listener.Callback,
   timeout:            30,
   feedback_interval:  1200,
-  support_old_ios:    true,
+  support_old_ios:    false,
   expiry:    60,
   pools: [
     dev_pool: [
       env: :dev,
       pool_size: 10,
       pool_max_overflow: 0,
-      certfile: "foo.pem",
+      certfile: "cert.pem",
       keyfile: "key.pem"
     ]
   ]

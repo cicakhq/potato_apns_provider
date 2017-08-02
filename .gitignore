@@ -22,6 +22,5 @@ erl_crash.dump
 *~
 mix.lock
 
-config/config.exs
 cert.pem
 key.pem
