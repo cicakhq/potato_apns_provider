@@ -1,19 +1,19 @@
-defmodule APNS_Listener do
+defmodule PotatoApns.QueueReader do
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], [])
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   @exchange "apns-sender-ex"
   @queue "apns-sender"
 
-  def init(_opts) do
+  def init(:ok) do
     rabbitmq_connect()
   end
 
   defp rabbitmq_connect do
-    case AMQP.Connection.open do
+    case AMQP.Connection.open(host: "10.137.2.26") do
       {:ok, conn} ->
         {:ok, channel} = AMQP.Channel.open(conn)
         {:ok, queue} = AMQP.Queue.declare(channel, @queue, [arguments: [{"x-message-ttl", :long, 60 * 60 * 1000}]])
