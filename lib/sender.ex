@@ -23,8 +23,12 @@ defmodule PotatoApns.Sender do
                 apns_priority: "10",
                 apns_topic: "network.potato.Gratin",
                 apns_collapse_id: "message_notification"}
-    {200, [{"apns-id", id}], :no_body}  = :apns.push_notification pid, token, notification, headers
-    {:reply, {:ok, id}, pid}
+    case :apns.push_notification(pid, token, notification, headers) do
+      {200, [{"apns-id", id}], :no_body} ->
+        {:reply, {:ok, id}, pid}
+      {400, [{"apns-id", _id}], _body} ->
+        {:reply, {:error, {:token_invalid, token}}, pid}
+    end
   end
 
   def init(:ok) do

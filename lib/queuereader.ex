@@ -61,13 +61,19 @@ defmodule PotatoApns.QueueReader do
     IO.puts "Got message: #{inspect(parsed)}"
 
     sender_name = parsed["sender_name"]
+    extra = %{"channel" => parsed["channel"],
+              "message_id" => parsed["message_id"],
+              "notification_type" => parsed["notification_type"],
+              "sender_id" => parsed["sender_id"],
+              "sender_name" => sender_name,
+              "text" => parsed["text"]}
+    case PotatoApns.Sender.send_message(parsed["token"], "Message from #{sender_name}", extra) do
+      {:ok, _id} ->
+        :ok
+      {:error, {:token_invalid, token}} ->
+        IO.puts "Should unregister token #{token} here"
+        :ok
+    end
 
-    PotatoApns.Sender.send_message parsed["token"], "Message from #{sender_name}",
-      %{"channel" => parsed["channel"],
-                         "message_id" => parsed["message_id"],
-                         "notification_type" => parsed["notification_type"],
-                         "sender_id" => parsed["sender_id"],
-                         "sender_name" => sender_name,
-                         "text" => parsed["text"]}
   end
 end
