@@ -15,27 +15,35 @@ defmodule PotatoApns.Sender do
     {:noreply, pid}
   end
 
-  def handle_call({:send_message, token, text}, _from, pid) do
-    notification = %{aps: %{alert: text}}
+  def handle_call({:send_message, token, text, extra}, _from, pid) do
+    notification = %{aps: %{alert: text,
+                            extra: extra}}
     headers = %{apns_id: UUID.uuid1(),
                 apns_expiration: "0",
                 apns_priority: "10",
                 apns_topic: "network.potato.Gratin",
-                apns_collapse_id: "potato.messages"}
+                apns_collapse_id: "message_notification"}
     {200, [{"apns-id", id}], :no_body}  = :apns.push_notification pid, token, notification, headers
     {:reply, {:ok, id}, pid}
   end
 
   def init(:ok) do
-    {:ok, pid} = :apns.connect :cert, :dev_config
-    {:ok, pid}
+    case :apns.connect(:cert, :dev_config) do
+      {:ok, pid} ->
+        {:ok, pid}
+      {:error, :already_started, pid} ->
+        :apns.close_connection pid
+        sleep(2)
+        init(:ok)
+    end
   end
 
-  def send_message(token, text) do
-    GenServer.call PotatoApns.Sender, {:send_message, token, text}
+  def send_message(token, text, extra) do
+    GenServer.call PotatoApns.Sender, {:send_message, token, text, extra}
   end
 
   def test_send do
-    send_message("E23E2C1974B78550D39561473512D27D73512C97A24F416584B8125369446D2E", "test test")
+    send_message("E23E2C1974B78550D39561473512D27D73512C97A24F416584B8125369446D2E", "test test",
+      %{"channel" => "xyz", "foo" => "blah"})
   end
 end

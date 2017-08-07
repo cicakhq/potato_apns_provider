@@ -51,3 +51,4 @@ config :apns,
   feedback_port: 2195
 
 # :apns.connect :cert, :dev_config
+# :apns.push_notification :dev_config, "foo", %{aps: %{alert: "test"}}
