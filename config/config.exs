@@ -30,17 +30,24 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 
 config :apns,
-  callback_module:    APNS_Listener.Callback,
-  timeout:            30,
-  feedback_interval:  1200,
-  support_old_ios:    false,
-  expiry:    60,
-  pools: [
-    dev_pool: [
-      env: :dev,
-      pool_size: 10,
-      pool_max_overflow: 0,
-      certfile: "cert.pem",
-      keyfile: "key.pem"
-    ]
-  ]
+  name: :dev_config,
+  apple_host: 'api.development.push.apple.com',
+  apple_port: 443,
+  certfile: 'cert.pem',
+  keyfile: 'key.pem',
+#  token_keyfile: "priv/APNsAuthKey_KEYID12345.p8",
+  timeout: 10000,
+
+  # APNs Headers
+
+  apns_id: "55d8299a-7b4b-11e7-800f-00163e5e6c0c",
+  apns_expiration: 0,
+  apns_priority: 10,
+  apns_topic: "network.potato.Gratin",
+  apns_collapse_id: "potato.messages",
+
+  # Feedback
+  feedback_host: 'feedback.push.apple.com',
+  feedback_port: 2195
+
+# :apns.connect :cert, :dev_config

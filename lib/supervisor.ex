@@ -6,7 +6,8 @@ defmodule PotatoApns.Supervisor do
   end
 
   def init(:ok) do
-    children = [{PotatoApns.QueueReader, name: PotatoApns.QueueReader}]
+    children = [{PotatoApns.QueueReader, name: PotatoApns.QueueReader},
+                {PotatoApns.Sender, name: PotatoApns.Sender}]
     Supervisor.init(children, strategy: :one_for_one)
   end
 end

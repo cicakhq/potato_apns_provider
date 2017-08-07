@@ -15,8 +15,8 @@ defmodule Foo.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [applications: [:apns],
-     extra_applications: [:logger, :amqp],
+    [applications: [],
+     extra_applications: [:logger, :amqp, :apns],
      mod: {PotatoApns, []}]
   end
 
@@ -33,6 +33,7 @@ defmodule Foo.Mixfile do
     [{:amqp, "~> 1.0.0-pre.1"},
      {:couchdb_connector, "~> 0.5.0"},
      {:poison, "~> 3.1.0"},
-     {:apns, git: "https://github.com/chvanikoff/apns4ex"}]
+     {:apns4erl, "~> 2.2.0", [app: false]},
+     {:uuid, "~> 1.1.7"}]
   end
 end
