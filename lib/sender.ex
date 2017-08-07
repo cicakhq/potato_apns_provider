@@ -33,7 +33,7 @@ defmodule PotatoApns.Sender do
         {:ok, pid}
       {:error, :already_started, pid} ->
         :apns.close_connection pid
-        sleep(2)
+        :timer.sleep(1000)
         init(:ok)
     end
   end
