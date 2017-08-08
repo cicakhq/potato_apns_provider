@@ -28,6 +28,8 @@ defmodule PotatoApns.Sender do
         {:reply, {:ok, id}, pid}
       {400, [{"apns-id", _id}], _body} ->
         {:reply, {:error, {:token_invalid, token}}, pid}
+      {:timeout, time} ->
+        {:reply, {:error, {:timeout, time}}}
     end
   end
 
@@ -35,7 +37,7 @@ defmodule PotatoApns.Sender do
     case :apns.connect(:cert, :dev_config) do
       {:ok, pid} ->
         {:ok, pid}
-      {:error, :already_started, pid} ->
+      {:error, {:already_started, pid}} ->
         :apns.close_connection pid
         :timer.sleep(1000)
         init(:ok)
