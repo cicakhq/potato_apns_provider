@@ -30,8 +30,8 @@ defmodule Foo.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:amqp, "~> 1.0.0-pre.1"},
-     {:couchdb_connector, "~> 0.5.0"},
+    [{:chatterbox, "~> 0.5.0", [override: true]},
+     {:amqp, "~> 1.0.0-pre.1"},
      {:poison, "~> 3.1.0"},
      {:apns4erl, "~> 2.2.0", [app: false]},
      {:uuid, "~> 1.1.7"}]
