@@ -23,13 +23,17 @@ defmodule PotatoApns.Sender do
                 apns_priority: "10",
                 apns_topic: "network.potato.Gratin",
                 apns_collapse_id: "message_notification"}
-    case :apns.push_notification(pid, token, notification, headers) do
+    res = :apns.push_notification(pid, token, notification, headers)
+    IO.puts "Got result from push notification: #{inspect(res)}"
+    case res do
       {200, [{"apns-id", id}], :no_body} ->
         {:reply, {:ok, id}, pid}
       {400, [{"apns-id", _id}], _body} ->
         {:reply, {:error, {:token_invalid, token}}, pid}
       {:timeout, time} ->
-        {:reply, {:error, {:timeout, time}}}
+        IO.puts "Connection timed out, time = #{time}. Killing connection and restarting service."
+        :apns.close_connection pid
+        throw "Timeout when sending message to server"
     end
   end
 

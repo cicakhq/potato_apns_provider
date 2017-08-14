@@ -75,6 +75,7 @@ defmodule PotatoApns.QueueReader do
         :ok
       {:error, {:timeout, _}} ->
         IO.puts "Timeout. Should retry"
+        :ok
     end
 
   end
