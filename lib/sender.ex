@@ -15,7 +15,11 @@ defmodule PotatoApns.Sender do
     {:noreply, pid}
   end
 
-  def handle_call({:send_message, token, text, extra}, _from, pid) do
+  defp connect do
+    :apns.connect(:cert, :dev_config)
+  end
+
+  defp attempt_send(pid, token, text, extra) do
     notification = %{aps: %{alert: text,
                             extra: extra}}
     headers = %{apns_id: UUID.uuid1(),
@@ -27,18 +31,30 @@ defmodule PotatoApns.Sender do
     IO.puts "Got result from push notification: #{inspect(res)}"
     case res do
       {200, [{"apns-id", id}], :no_body} ->
-        {:reply, {:ok, id}, pid}
+        {:call_reply, {:ok, id}}
       {400, [{"apns-id", _id}], _body} ->
-        {:reply, {:error, {:token_invalid, token}}, pid}
+        {:call_reply, {:error, {:token_invalid, token}}}
       {:timeout, time} ->
+        {:call_timeout, time}
+    end
+  end
+
+  def handle_call({:send_message, token, text, extra}, _from, pid) do
+    res = attempt_send(pid, token, text, extra)
+    case res do
+      {:call_reply, status} ->
+        {:reply, status, pid}
+      {:call_timeout, time} ->
         IO.puts "Connection timed out, time = #{time}. Killing connection and restarting service."
         :apns.close_connection pid
-        throw "Timeout when sending message to server"
+        {:ok, pid} = connect()
+        {:call_reply, status} = attempt_send(pid, token, text, extra)
+        {:reply, status, pid}
     end
   end
 
   def init(:ok) do
-    case :apns.connect(:cert, :dev_config) do
+    case connect() do
       {:ok, pid} ->
         {:ok, pid}
       {:error, {:already_started, pid}} ->
