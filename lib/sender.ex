@@ -41,6 +41,7 @@ defmodule PotatoApns.Sender do
 
   def handle_call({:send_message, token, text, extra}, _from, pid) do
     res = attempt_send(pid, token, text, extra)
+    IO.puts "After first attempt to send: #{inspect(res)}"
     case res do
       {:call_reply, status} ->
         {:reply, status, pid}
@@ -48,7 +49,9 @@ defmodule PotatoApns.Sender do
         IO.puts "Connection timed out, time = #{time}. Killing connection and attempting redelivery."
         :apns.close_connection pid
         {:ok, pid} = connect()
-        {:call_reply, status} = attempt_send(pid, token, text, extra)
+        res = attempt_send(pid, token, text, extra)
+        IO.puts "After second attempt to send: #{inspect(res)}"
+        {:call_reply, status} = res
         {:reply, status, pid}
     end
   end
