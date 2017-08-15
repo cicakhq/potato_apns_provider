@@ -45,7 +45,7 @@ defmodule PotatoApns.Sender do
       {:call_reply, status} ->
         {:reply, status, pid}
       {:call_timeout, time} ->
-        IO.puts "Connection timed out, time = #{time}. Killing connection and restarting service."
+        IO.puts "Connection timed out, time = #{time}. Killing connection and attempting redelivery."
         :apns.close_connection pid
         {:ok, pid} = connect()
         {:call_reply, status} = attempt_send(pid, token, text, extra)
