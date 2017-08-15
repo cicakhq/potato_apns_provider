@@ -67,7 +67,9 @@ defmodule PotatoApns.QueueReader do
               "sender_id" => parsed["sender_id"],
               "sender_name" => sender_name,
               "text" => parsed["text"]}
-    case PotatoApns.Sender.send_message(parsed["token"], "Message from #{sender_name}", extra) do
+    result = PotatoApns.Sender.send_message(parsed["token"], "Message from #{sender_name}", extra)
+    IO.puts "In queuereader, result from send_message: #{inspect(result)}"
+    case result do
       {:ok, _id} ->
         :ok
       {:error, {:token_invalid, token}} ->
