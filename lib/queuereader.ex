@@ -73,9 +73,6 @@ defmodule PotatoApns.QueueReader do
       {:error, {:token_invalid, token}} ->
         IO.puts "Should unregister token #{token} here"
         :ok
-      {:error, {:timeout, _}} ->
-        IO.puts "Timeout. Should retry"
-        :ok
     end
 
   end
