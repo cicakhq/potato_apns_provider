@@ -51,7 +51,9 @@ defmodule PotatoApns.QueueReader do
   end
 
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered}}, channel) do
-    spawn fn -> consume(channel, tag, redelivered, payload) end
+    # spawn fn -> consume(channel, tag, redelivered, payload) end
+    res = consume(channel, tag, redelivered, payload)
+    IO.puts "In queuereader. Result from consume call: #{inspect(res)}"
     {:noreply, channel}
   end
 
