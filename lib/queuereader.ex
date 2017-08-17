@@ -76,6 +76,5 @@ defmodule PotatoApns.QueueReader do
         IO.puts "Should unregister token #{token} here"
         :ok
     end
-
   end
 end
