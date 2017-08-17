@@ -68,7 +68,7 @@ defmodule PotatoApns.Sender do
   end
 
   def send_message(token, text, extra) do
-    GenServer.call PotatoApns.Sender, {:send_message, token, text, extra}
+    GenServer.call PotatoApns.Sender, {:send_message, token, text, extra}, 45 * 1000
   end
 
   def test_send do
